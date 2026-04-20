@@ -1,0 +1,33 @@
+stages:
+  - docs
+
+pages:
+  stage: docs
+  image: alpine
+  before_script:
+    - apk add --no-cache doxygen graphviz wget
+  script:
+    # Télécharger Doxygen Awesome CSS/JS
+    - mkdir -p docs/doxygen-awesome
+    - wget -q -O docs/doxygen-awesome/doxygen-awesome.css https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome.css
+    - wget -q -O docs/doxygen-awesome/doxygen-awesome-darkmode-toggle.js https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome-darkmode-toggle.js
+    - wget -q -O docs/doxygen-awesome/doxygen-awesome-fragment-copy-button.js https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome-fragment-copy-button.js
+    - wget -q -O docs/doxygen-awesome/doxygen-awesome-interactive-toc.js https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome-interactive-toc.js
+    - wget -q -O docs/doxygen-awesome/doxygen-awesome-paragraph-link.js https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome-paragraph-link.js
+    - wget -q -O docs/doxygen-awesome/doxygen-awesome-sidebar-only.css https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome-sidebar-only.css
+    - wget -q -O docs/doxygen-awesome/doxygen-awesome-sidebar-only-darkmode-toggle.css https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome-sidebar-only-darkmode-toggle.css
+    - wget -q -O docs/doxygen-awesome/doxygen-awesome-tabs.js https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome-tabs.js
+    - wget -q -O docs/doxygen-awesome/theme-round.css https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-custom/theme-round.css
+    - wget -q -O docs/doxygen-awesome/custom.css https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-custom/custom.css
+    - wget -q -O docs/doxygen-awesome/theme-robot.css https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-custom/theme-robot.css
+    - wget -q -O docs/doxygen-awesome/header.html https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-custom/header.html
+    - wget -q -O docs/doxygen-awesome/toggle-alternative-theme.js https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-custom/toggle-alternative-theme.js
+
+    # Générer la doc Doxygen
+    - doxygen Doxyfile
+
+    # Déplacer le HTML dans public
+    - mv docs/html/* public
+  artifacts:
+    paths:
+      - public
