@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Interlocuteur{% endblock %}
+
+{% block body %}
+    <h1>Interlocuteur</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ interlocuteur.id }}</td>
+            </tr>
+            <tr>
+                <th>Username</th>
+                <td>{{ interlocuteur.username }}</td>
+            </tr>
+            <tr>
+                <th>Role</th>
+                <td>{{ interlocuteur.role }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ interlocuteur.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ interlocuteur.prenom }}</td>
+            </tr>
+            <tr>
+                <th>Mail</th>
+                <td>{{ interlocuteur.mail }}</td>
+            </tr>
+            <tr>
+                <th>Portable</th>
+                <td>{{ interlocuteur.portable }}</td>
+            </tr>
+            <tr>
+                <th>Statut</th>
+                <td>{{ interlocuteur.statut }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_interlocuteur_index') }}">back to list</a>
+
+    <a href="{{ path('app_interlocuteur_edit', {'id': interlocuteur.id}) }}">edit</a>
+
+    {{ include('interlocuteur/_delete_form.html.twig') }}
+{% endblock %}

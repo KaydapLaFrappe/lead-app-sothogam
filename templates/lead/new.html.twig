@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Lead{% endblock %}
+
+{% block body %}
+<div class="leads-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h1>Créer un nouveau Lead</h1>
+        </div>
+        <a href="{{ path('app_lead_index') }}" class="btn-back">
+            ← Retour à la liste
+        </a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-header">
+                <h2 class="form-title">Informations du lead</h2>
+                <p class="form-description">Remplissez les informations pour créer un nouveau lead</p>
+            </div>
+
+            <div class="form-body">
+                {{ include('lead/_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

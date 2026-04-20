@@ -1,0 +1,82 @@
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            # -----------------------------
+            # Base principale
+            default:
+                url: '%env(resolve:DATABASE_URL)%'
+
+            # -----------------------------
+            # Base Oracle ERP
+            oracle:
+                driver: oci8
+                host: '%env(ORACLE_DB_HOST)%'
+                port: '%env(ORACLE_DB_PORT)%'
+                dbname: '%env(ORACLE_DB_SERVICE)%' 
+                user: '%env(ORACLE_DB_USER)%'
+                password: '%env(ORACLE_DB_PASSWORD)%'
+                service: true
+                charset: AL32UTF8
+
+                # Base OVH Sothoferm
+            ovh:
+                driver: pdo_mysql
+                host: '%env(OVH_DB_HOST)%'
+                dbname: '%env(OVH_DB_NAME)%' 
+                user: '%env(OVH_DB_USER)%'
+                password: '%env(OVH_DB_PASSWORD)%'
+                service: true
+                charset: utf8      
+
+    orm:
+        default_entity_manager: default
+        entity_managers:
+            default:
+                connection: default
+                auto_mapping: true
+                report_fields_where_declared: true
+                validate_xml_mapping: true
+                naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+                identity_generation_preferences:
+                    Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
+                mappings:
+                    App:
+                        type: attribute
+                        is_bundle: false
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity'
+                        alias: App
+                dql:
+                    datetime_functions:
+                        month: DoctrineExtensions\Query\Mysql\Month
+                        YEAR: DoctrineExtensions\Query\Mysql\Year
+
+# -----------------------------
+# TEST ENV
+when@test:
+    doctrine:
+        dbal:
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+
+# -----------------------------
+# PROD ENV
+when@prod:
+    doctrine:
+        orm:
+            entity_managers:
+                default:
+                    query_cache_driver:
+                        type: pool
+                        pool: doctrine.system_cache_pool
+                    result_cache_driver:
+                        type: pool
+                        pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system

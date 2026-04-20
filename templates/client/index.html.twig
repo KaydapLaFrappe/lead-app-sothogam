@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion Clients{% endblock %}
+
+{% block body %}
+<div class="dashboard-container">
+    <div class="header-section">
+        <div>
+            <h1>Répertoire Clients</h1>
+            <p class="subtitle">{{ clients|length }} enregistrements trouvés</p>
+        </div>
+        <a href="{{ path('app_client_new') }}" class="btn-main">
+            <span class="plus-icon">+</span> Nouveau Client
+        </a>
+    </div>
+
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Société</th>
+                        <th>Contact</th>
+                        <th>Localisation</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for client in clients %}
+                    <tr>
+                        
+                        <td>
+                            <div class="user-info">
+                                <div class="avatar">{{ client.nom|first|upper }}</div>
+                                <div>
+                                    <span class="user-name">{{ client.nom }} {{ client.prenom }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="company-tag">{{ client.nomSociete }}</span></td>
+                        <td>
+                            <div class="contact-box">
+                                <a href="mailto:{{ client.mail }}" class="mail-link">{{ client.mail }}</a>
+                                <span class="tel-link">{{ client.tel }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="location-box">
+                                <span class="city">{{ client.adresseVille }}</span>
+                                <span class="dept">Dept: {{ client.departement }}</span>
+                            </div>
+                        </td>
+                        <td class="actions-cell">
+                            <a href="{{ path('app_client_show', {'id': client.id}) }}" class="btn-icon view" title="Voir">👁</a>
+                            <a href="{{ path('app_client_edit', {'id': client.id}) }}" class="btn-icon edit" title="Modifier">✏️</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="no-data">Aucun client trouvé dans la base.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

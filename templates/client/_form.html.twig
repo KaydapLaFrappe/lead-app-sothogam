@@ -1,0 +1,38 @@
+<div class="form-card">
+    {{ form_start(form, {'attr': {'class': 'custom-form'}}) }}
+        
+        <div class="form-section">
+            <h3 class="section-title"><i class="icon">👤</i> Informations Générales</h3>
+            <div class="form-row">
+                <div class="form-group">{{ form_row(form.nom, {'label': 'Nom', 'attr': {'placeholder': 'Ex: Martin'}}) }}</div>
+                <div class="form-group">{{ form_row(form.prenom, {'label': 'Prénom', 'attr': {'placeholder': 'Ex: Jean'}}) }}</div>
+            </div>
+            <div class="form-group">
+                {{ form_row(form.nom_societe, {'label': 'Nom de la Société', 'attr': {'placeholder': 'Laissez vide si particulier'}}) }}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title"><i class="icon">📞</i> Contact & Communication</h3>
+            <div class="form-row">
+                <div class="form-group">{{ form_row(form.mail, {'label': 'Adresse Email', 'attr': {'placeholder': 'jean@exemple.com'}}) }}</div>
+                <div class="form-group">{{ form_row(form.tel, {'label': 'Téléphone', 'attr': {'placeholder': '06...'}}) }}</div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title"><i class="icon">📍</i> Adresse & Localisation</h3>
+            <div class="form-group">{{ form_row(form.adresse_ligne, {'label': 'Rue / Avenue'}) }}</div>
+            <div class="form-row-triple">
+                <div class="form-group">{{ form_row(form.adresse_CP, {'label': 'Code Postal'}) }}</div>
+                <div class="form-group">{{ form_row(form.adresse_ville, {'label': 'Ville'}) }}</div>
+                <div class="form-group">{{ form_row(form.departement, {'label': 'Dépt'}) }}</div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn-save">{{ button_label|default('Enregistrer les modifications') }}</button>
+        </div>
+
+    {{ form_end(form) }}
+</div>

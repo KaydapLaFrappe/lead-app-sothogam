@@ -1,0 +1,242 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lead #{{ lead.id }} — {{ lead.nom|upper }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/lead_show.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="ld-page">
+
+        {# ── HEADER : Titre et Actions principales ── #}
+    <div class="ld-header">
+        <div class="ld-header-left">
+            <h1 class="ld-name">{{ lead.prenom }} {{ lead.nom|upper }}</h1>
+        </div>
+
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:12px;">
+            {# Mappage des styles et libellés #}
+            {% set statutClass = {'0': 'non-traite', '1': 'traite', '4': 'direct', '2':'ferme', 'Archivé':'archive'} %}
+            {% set statutLabel = {'0': 'Non Traité', '1': 'Orienté', '4': 'Direct', '2': 'Fermé', 'Archivé': 'Archivé'} %}
+            {% set CategorieLabel = {'0' : 'Professionnel', '1' : 'Particulier'} %}
+            {% set SourceLabel = {'1' : 'Sothoferm', '2' : 'Lumis', '3' : 'BatiProduit'} %}
+
+            <span class="ld-statut {{ statutClass[lead.statut]|default('non-traite') }}">
+                {{ statutLabel[lead.statut]|default('Inconnu (' ~ lead.statut ~ ')') }} <p>vers</p>{{lead.orientationClient}}
+            </span>
+
+            <div class="ld-actions">
+                <a href="{{ path('app_lead_index', { 'type': currentType, 'teamOrMe': teamOrMe, 'filterCommercial': filterCommercial }) }}" class="btn-action btn-back">← Retour</a>
+                
+                {# Bouton Reset si le lead est traité (processed, closed, direct, random) #}
+                {% if lead.statut in ['1', '2', '3', '4'] %}
+                    <button onclick="openModal('back')" class="btn-action">🔄 Reset</button>
+                {% endif %}
+                
+                {# Boutons d'action si le lead est en attente (pending) #}
+                {% if lead.statut == '0' %}
+                    <button onclick="openModal('orient')" class="btn-action btn-orient">🎯 Orienter</button>
+                    <button onclick="openModal('reply')" class="btn-action btn-reply">💬 Répondre</button>
+                    <button onclick="openModal('transfer')" class="btn-action btn-edit">🔄 Transférer</button>
+                    <button onclick="openModal('close')" class="btn-action btn-close">🔒 Clôturer</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# ── GRILLE D'INFORMATIONS ── #}
+    <div class="ld-grid">
+
+        {# Carte 1 : Informations Globales (Synthèse) #}
+        <div class="ld-card ld-full">
+            <p class="ld-card-title">Informations Lead</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0 40px;">
+                <div>
+                    <div class="ld-row">
+                        <label>Contact</label>
+                        <span>{{ lead.prenom }} {{ lead.nom|upper }}</span>
+                    </div>
+                    <div class="ld-row">
+                        <label>Email</label>
+                        <a href="mailto:{{ lead.mail }}">{{ lead.mail }}</a>
+                    </div>
+                    <div class="ld-row">
+                        <label>Téléphone</label>
+                        <a href="tel:{{ lead.tel }}">{{ lead.tel }}</a>
+                    </div>
+                    <div class="ld-row">
+                        <label>Catégorie</label>
+                        <span>{{ CategorieLabel[lead.categorieDemandeur]|default('Non défini') }}</span>
+                    </div>
+                    <div class="ld-row">
+                        <label>Produit</label>
+                        <span>{{ lead.collectionCategory|default('Non défini') }}</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="ld-row">
+                        <label>Localisation</label>
+                        <span>{{ lead.adresseCP }} {{ lead.adresseVille }}</span>
+                    </div>
+                    <div class="ld-row">
+                        <label>Création</label>
+                        <span>{{ lead.dateCreation ? lead.dateCreation|date('d/m/Y') : '—' }}</span>
+                    </div>
+                    <div class="ld-row">
+                        <label>Relance</label>
+                        <span>{{ lead.dateRelance ? lead.dateRelance|date('d/m/Y') : 'Aucune relance effectuée' }}</span>
+                    </div>
+                    <div class="ld-row">
+                        <label>Source</label>
+                        <span>{{ SourceLabel[lead.source]|default(lead.source) }}</span>
+                    </div>
+                    <div class="ld-row">
+                        <label>DPT</label>
+                        <span>{{ lead.adresseCP|slice(0, 2) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Carte 2 : Message / Besoin #}
+        <div class="ld-card ld-full">
+            <p class="ld-card-title">Message / Besoin</p>
+            <div class="ld-message" style="white-space: pre-wrap; line-height: 1.6; background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                {{ lead.message|default('Aucun message précisé.') }}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{# ── Modals ── #}
+
+{# Modal Clôturer #}
+<div class="modal-overlay" id="modal-close">
+    <div class="modal-box">
+        <div class="modal-icon">🔒</div>
+        <p class="modal-title">Clôturer ce lead ?</p>
+        <p class="modal-text">Le statut passera à <strong>Fermé</strong>. Vous pourrez le modifier ultérieurement.</p>
+        <div class="modal-btns">
+            <button onclick="closeModal('close')" class="btn-action btn-back">Annuler</button>
+            <a href="{{ path('app_lead_close', {'id': lead.id}) }}" class="btn-action btn-close">Confirmer</a>
+        </div>
+    </div>
+</div>
+
+{# Modal Archiver (CORRIGÉE ICI) #}
+<div class="modal-overlay" id="modal-archive">
+    <div class="modal-box">
+        <div class="modal-icon">📦</div> {# Petit changement d'icône pour différencier #}
+        <p class="modal-title">Archiver ce lead ?</p>
+        <p class="modal-text">Ce lead sera transféré dans la table des archives.</p>
+        <div class="modal-btns">
+            <button onclick="closeModal('archive')" class="btn-action btn-back">Annuler</button>
+            <a href="{{ path('app_lead_archived', {'id': lead.id}) }}" class="btn-action btn-close">Confirmer</a>
+        </div>
+    </div>
+</div>
+
+{# Modal Orienter #}
+<div class="modal-overlay" id="modal-orient">
+    <div class="modal-box">
+        <div class="modal-icon">🎯</div>
+        <p class="modal-title">Orienter vers un client</p>
+        <form method="POST" action="{{ path('app_lead_orient', {'id': lead.id}) }}">
+            <div class="lf-group" style="margin-bottom: 24px;">
+                <label>Client</label>
+                {% if clients is empty %}
+                    <p style="color:var(--ink-muted); font-style:italic; text-align:center; padding: 12px 0;">
+                        Aucun client disponible — assignez d'abord un commercial.
+                    </p>
+                {% else %}
+                    <select name="client_code" required>
+                        <option value="">-- Choisir un client --</option>
+                        {% for client in clients %}
+                            <option value="{{ client.code }}">{{ client.libelle }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </div>
+            <div class="modal-btns">
+                <button type="button" onclick="closeModal('orient')" class="btn-action btn-back">Annuler</button>
+                {% if clients is not empty %}
+                    <button type="submit" class="btn-action btn-orient">Confirmer</button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+{# Modal Répondre #}
+<div class="modal-overlay" id="modal-reply">
+    <div class="modal-box">
+        <div class="modal-icon">💬</div>
+        <p class="modal-title">Répondre à {{ lead.prenom }} {{ lead.nom }}</p>
+        <p class="modal-text">Ce message sera ajouté au lead et envoyé par email à <strong>{{ lead.mail }}</strong>.</p>
+        <form method="POST" action="{{ path('app_lead_repondre', {'id': lead.id}) }}">
+            <div class="lf-group" style="margin-bottom: 20px;">
+                <label>Message</label>
+                <textarea name="reponse" rows="5" placeholder="Bonjour {{ lead.prenom }}, suite à votre demande..." required></textarea>
+            </div>
+            <div class="modal-btns">
+                <button type="button" onclick="closeModal('reply')" class="btn-action btn-back">Annuler</button>
+                <button type="submit" class="btn-action btn-reply">Envoyer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# Modal Transférer #}
+<div class="modal-overlay" id="modal-transfer">
+    <div class="modal-box">
+        <div class="modal-icon">🔄</div>
+        <p class="modal-title">Transférer à un commercial</p>
+        <p class="modal-text">Sélectionnez le commercial à qui transférer ce lead.</p>
+        <form method="POST" action="{{ path('app_lead_transfer', {'id': lead.id}) }}">
+            <div class="lf-group" style="margin-bottom: 24px;">
+                <label>Commercial</label>
+                <select name="identifier" required>
+                    <option value="">-- Choisir un commercial --</option>
+                    {% for commercial in commerciaux %}
+                        <option value="{{ commercial.code }}">
+                            [{{ commercial.code }}] {{ commercial.nom }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="modal-btns">
+                <button type="button" onclick="closeModal('transfer')" class="btn-action btn-back">Annuler</button>
+                <button type="submit" class="btn-action btn-orient">Confirmer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# Modal Back / Reset #}
+<div class="modal-overlay" id="modal-back">
+    <div class="modal-box">
+        <div class="modal-icon">🔒</div>
+        <p class="modal-title">Remettre le lead comme Non Traité</p>
+        <p class="modal-text">Le statut passera à <strong>Non Traité</strong></p>
+        <div class="modal-btns">
+            <button onclick="closeModal('back')" class="btn-action btn-back">Annuler</button>
+            <a href="{{ path('app_lead_retour', {'id': lead.id}) }}" class="btn-action btn-close">Confirmer</a>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+function openModal(name)  { document.getElementById('modal-' + name).classList.add('open'); }
+function closeModal(name) { document.getElementById('modal-' + name).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+</script>
+{% endblock %}
+
+{% endblock %}

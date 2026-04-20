@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LManager{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('css/base.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lead.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <!-- Header avec Logo -->
+            <div class="sidebar-header">
+                <a href="{{ path('app_main') }}" class="logo">
+                    <div class="logo-icon">
+                        <img src="{{ asset('images/icon.png') }}" alt="LManager Logo">
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">LManager</span>
+                        {% if isATC %}
+                            <span style="font-size: 0.7rem; color: #ffc107; font-weight: bold;">ATC</span>
+                        {% endif %}
+                    </div>
+                </a>
+                <a href="{{ path('app_home') }}" class="logout-btn">
+                    Déconnexion
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Principal</div>
+                    
+                    <a href="{{ path('app_main') }}" class="nav-link">
+                        <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <span class="nav-label">Dashboard</span>
+                        
+                    </a>
+                    
+                    {% if isATC %}
+                        {# Menu pour ATC : voir tous les leads #}
+                        <a href="{{ path('app_lead_index', {'type': 'pending'}) }}" class="nav-link">
+                            <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            <span class="nav-label">
+                                Tous les Leads
+                            </span>
+                            <span class="nav-badge">{{ NbAllNonTraite }}</span>
+                        </a>
+
+                        <a href="{{ path('app_lead_index', {'type': 'ferme'}) }}" class="nav-link">
+                            <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="nav-label">Traités</span>
+                            <span class="nav-badge">{{ NbAllFerme }}</span>
+                        </a>
+
+                    {% else %}
+                        {# Menu pour CDV et Commerciaux normaux #}
+                        <a href="{{ path('app_lead_index', {'type': 'pending', 'teamOrMe' : 'me'}) }}" class="nav-link">
+                            <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                            <span class="nav-label">
+                                Mes Leads
+                            </span>
+                            <span class="nav-badge">{{ NbMyLeadNonTraite }}</span>
+                        </a>
+
+                        {% if isCDV %}
+                        <a href="{{ path('app_lead_index', {'type': 'pending', 'teamOrMe' : 'team'}) }}" class="nav-link">
+                            <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            <span class="nav-label">
+                                Leads Équipe
+                            </span>
+                            <span class="nav-badge">{{ NbTeamLeadNonTraite }}</span>
+                        </a>
+                        {% endif %}
+
+                        <a href="{{ path('app_lead_index', {'type': 'ferme', 'teamOrMe': 'all'}) }}" class="nav-link">
+                            <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="nav-label">Traités</span>
+                            <span class="nav-badge">{{ NbMyLeadFerme }}</span>
+                        </a>
+                    {% endif %}
+
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-wrapper">
+            <header class="top-bar">
+                <h1 class="page-title">Tableau de bord</h1>
+            </header>
+            
+            <section class="content">
+                {% block body %}{% endblock %}
+            </section>
+        </main>
+    </div>
+
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

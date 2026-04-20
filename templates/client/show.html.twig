@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil Client - {{ client.nom }}{% endblock %}
+
+{% block body %}
+<div class="show-container">
+    <div class="show-header">
+        <a href="{{ path('app_client_index') }}" class="btn-back">← Retour à la liste</a>
+        <div class="header-actions">
+            <a href="{{ path('app_client_edit', {'id': client.id}) }}" class="btn-edit-action">Modifier le profil</a>
+            <div class="delete-form-wrapper">
+                {{ include('client/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-card">
+        <div class="profile-grid">
+            
+            <div class="main-info-card">
+                <div class="profile-avatar-large">
+                    {{ client.nom|first|upper }}{{ client.prenom|first|upper }}
+                </div>
+                <h1 class="client-fullname">{{ client.prenom }} {{ client.nom }}</h1>
+                <span class="company-tag">{{ client.nomSociete|default('Particulier') }}</span>
+                <br>
+            </div>
+
+            <div class="info-details">
+                <div class="info-section">
+                    <h3 class="info-section-title">📧 Coordonnées</h3>
+                    <div class="info-row-grid">
+                        <div class="info-field">
+                            <label>Email professionnel</label>
+                            <p><a href="mailto:{{ client.mail }}" class="mail-link">{{ client.mail }}</a></p>
+                        </div>
+                        <div class="info-field">
+                            <label>Téléphone</label>
+                            <p class="tel-link">{{ client.tel }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+                <div class="info-section">
+                    <h3 class="info-section-title">📍 Localisation</h3>
+                    <div class="info-field">
+                        <label>Adresse postale</label>
+                        <p>{{ client.adresseLigne }}</p>
+                    </div>
+                    <div class="info-row-grid">
+                        <div class="info-field">
+                            <label>Code Postal & Ville</label>
+                            <p>{{ client.adresseCP }} {{ client.adresseVille }}</p>
+                        </div>
+                        <div class="info-field">
+                            <label>Département</label>
+                            <p>{{ client.departement }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

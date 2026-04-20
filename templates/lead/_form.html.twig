@@ -1,0 +1,75 @@
+{% block stylesheets %}
+{% endblock %}
+
+<div class="lf-wrap">
+{{ form_start(form, {'attr': {'class': 'lf-form'}}) }}
+
+    <div class="lf-section">
+        <p class="lf-section-title">Informations générales</p>
+        <div class="lf-grid">
+            <div class="lf-group">{{ form_label(form.source) }}{{ form_widget(form.source) }}</div>
+            <div class="lf-group">{{ form_label(form.dateCreation) }}{{ form_widget(form.dateCreation) }}</div>
+            <div class="lf-group">{{ form_label(form.statut) }}{{ form_widget(form.statut) }}</div>
+        </div>
+    </div>
+
+    <div class="lf-section">
+        <p class="lf-section-title">Le Demandeur</p>
+        <div class="lf-grid">
+            <div class="lf-group">{{ form_label(form.nom) }}{{ form_widget(form.nom) }}</div>
+            <div class="lf-group">{{ form_label(form.prenom) }}{{ form_widget(form.prenom) }}</div>
+            <div class="lf-group">{{ form_label(form.nomSociete) }}{{ form_widget(form.nomSociete) }}</div>
+            <div class="lf-group">{{ form_label(form.categorieDemandeur) }}{{ form_widget(form.categorieDemandeur) }}</div>
+            <div class="lf-group">{{ form_label(form.mail) }}{{ form_widget(form.mail) }}</div>
+            <div class="lf-group">{{ form_label(form.tel) }}{{ form_widget(form.tel) }}</div>
+            <div class="lf-group lf-full">{{ form_label(form.activiteDemandeur) }}{{ form_widget(form.activiteDemandeur) }}</div>
+        </div>
+    </div>
+
+    <div class="lf-section">
+        <p class="lf-section-title">Localisation</p>
+        <div class="lf-grid">
+            <div class="lf-group lf-full">{{ form_label(form.adresseLigne1) }}{{ form_widget(form.adresseLigne1) }}</div>
+            <div class="lf-group">{{ form_label(form.adresseCP) }}{{ form_widget(form.adresseCP) }}</div>
+            <div class="lf-group">{{ form_label(form.adresseVille) }}{{ form_widget(form.adresseVille) }}</div>
+        </div>
+    </div>
+
+    <div class="lf-section">
+        <p class="lf-section-title">Détails de l'affectation</p>
+        <div class="lf-grid">
+            <div class="lf-group lf-full">{{ form_label(form.message) }}{{ form_widget(form.message, {'attr': {'rows': 5}}) }}</div>
+            <div class="lf-group">
+                <label>Commercial Oracle</label>
+                <div class="oracle-chip">
+                    {% if infoOracle.COMMERCIAL is defined %}
+                        [{{ infoOracle.COMMERCIAL|format('%03d') }}] {{ infoOracle.ATC }}
+                    {% else %}
+                        Non défini
+                    {% endif %}
+                </div>
+            </div>
+            <div class="lf-group">{{ form_label(form.client) }}{{ form_widget(form.client) }}</div>
+            <div class="lf-group">{{ form_label(form.operation) }}{{ form_widget(form.operation) }}</div>
+        </div>
+    </div>
+
+    <div class="lf-section">
+        <p class="lf-section-title">Suivi & Dates</p>
+        <div class="lf-grid">
+            <div class="lf-group">{{ form_label(form.dateRelance) }}{{ form_widget(form.dateRelance) }}</div>
+            <div class="lf-group">{{ form_label(form.dateReponse) }}{{ form_widget(form.dateReponse) }}</div>
+            <div class="lf-group">{{ form_label(form.envoyeSe) }}{{ form_widget(form.envoyeSe) }}</div>
+            <div class="lf-group">{{ form_label(form.numeroGenere) }}{{ form_widget(form.numeroGenere, {'attr': {'readonly': true}}) }}</div>
+        </div>
+    </div>
+
+    {{ form_rest(form) }}
+
+    <div class="lf-actions">
+        <a href="{{ path('app_lead_index') }}" class="btn-cancel">Annuler</a>
+        <button type="submit" class="btn-save">{{ button_label|default('Enregistrer le Lead') }}</button>
+    </div>
+
+{{ form_end(form) }}
+</div>

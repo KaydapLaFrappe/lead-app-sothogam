@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modidier le lead{% endblock %}
+
+{% block body %}
+    <h1>Modifier</h1>
+
+    {{ include('lead/_form.html.twig', {'button_label': 'Modidier'}) }}
+
+{% endblock %}
